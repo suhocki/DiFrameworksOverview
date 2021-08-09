@@ -1,8 +1,10 @@
 package app.suhocki.diframeworksoverview.data.security
 
 import app.suhocki.diframeworksoverview.data.device.DeviceController
+import toothpick.InjectConstructor
 import java.util.*
 
+@InjectConstructor
 class SecurityManager(
     private val deviceController: DeviceController,
 ) {

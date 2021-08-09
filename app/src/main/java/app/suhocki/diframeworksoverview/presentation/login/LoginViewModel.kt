@@ -8,7 +8,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class LoginViewModel(
     val errorHandler: ErrorHandler,
     private val userManager: UserManager,
