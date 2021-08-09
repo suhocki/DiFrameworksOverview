@@ -4,23 +4,23 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
-import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
+import app.suhocki.diframeworksoverview.di.app.AppComponent
+import app.suhocki.diframeworksoverview.di.login.LoginComponent
 import app.suhocki.diframeworksoverview.presentation.utils.FragmentFactory
-import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
 
 class MainActivity : AppCompatActivity() {
 
     init {
         lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY && !isChangingConfigurations) {
-                ViewModelStorage.clearAll()
+                LoginComponent.destroy()
             }
         })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        supportFragmentManager.fragmentFactory = FragmentFactory(applicationContext)
+        supportFragmentManager.fragmentFactory = FragmentFactory()
+        AppComponent.initialize(applicationContext)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,11 +31,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToLogin() {
-        val viewModel: LoginViewModel = ViewModelStorage.getViewModel(applicationContext)
-        val fragment = LoginFragment(viewModel)
+        LoginComponent.initialize()
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
+            .replace(R.id.fragment_container, LoginComponent.get().fragment)
             .commit()
     }
 }

@@ -3,8 +3,9 @@ package app.suhocki.diframeworksoverview.data.preferences
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
+import javax.inject.Inject
 
-class SharedPreferencesWrapper(
+class SharedPreferencesWrapper @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : Preferences {
 

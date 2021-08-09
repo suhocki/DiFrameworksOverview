@@ -1,8 +1,9 @@
 package app.suhocki.diframeworksoverview.data.authorization
 
 import app.suhocki.diframeworksoverview.data.security.SecurityManager
+import javax.inject.Inject
 
-class LoginRepository(
+class LoginRepository @Inject constructor(
     private val authorizationApi: AuthorizationApi,
     private val securityManager: SecurityManager
 ) {
