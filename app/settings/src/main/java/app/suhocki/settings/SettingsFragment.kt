@@ -1,4 +1,4 @@
-package app.suhocki.diframeworksoverview.presentation.settings
+package app.suhocki.settings
 
 import android.os.Bundle
 import android.view.View
