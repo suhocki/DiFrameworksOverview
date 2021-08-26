@@ -11,6 +11,9 @@ import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
 import app.suhocki.diframeworksoverview.presentation.login.loginModule
 import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragment
+import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
+import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragmentProxy
+import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
 import by.kirich1409.viewbindingdelegate.viewBinding
 import toothpick.InjectConstructor
 import toothpick.ktp.KTP
