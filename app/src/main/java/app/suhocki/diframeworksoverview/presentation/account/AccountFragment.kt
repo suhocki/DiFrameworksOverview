@@ -3,7 +3,6 @@ package app.suhocki.diframeworksoverview.presentation.account
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -15,7 +14,7 @@ import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
 import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragment
+import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragmentProxy
 import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
 import by.kirich1409.viewbindingdelegate.viewBinding
 
@@ -59,7 +58,7 @@ class AccountFragment(
         val currentUser = userManager.currentUser
         val sharedPreferences = requireContext().getSharedPreferences(currentUser, Context.MODE_PRIVATE)
         val preferences = SharedPreferencesWrapper(sharedPreferences)
-        val fragment = SettingsFragment(preferences)
+        val fragment = SettingsFragmentProxy.create(preferences)
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

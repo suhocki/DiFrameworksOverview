@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DiFrameworksOverview</string>
+    <string name="title_settings">Settings</string>
 </resources>
