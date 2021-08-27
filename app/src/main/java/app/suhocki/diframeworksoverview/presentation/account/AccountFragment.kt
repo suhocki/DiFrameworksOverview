@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import app.suhocki.diframeworksoverview.R
 import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
-import app.suhocki.diframeworksoverview.di.app.AppComponent
+import app.suhocki.diframeworksoverview.di.app.SettingsComponentProxy
 import app.suhocki.diframeworksoverview.di.login.LoginComponent
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -46,7 +46,7 @@ class AccountFragment @Inject constructor(
     }
 
     private fun openSettings() {
-        val fragment = AppComponent.get().getSettingsFragment()
+        val fragment = SettingsComponentProxy.getSettingsFragment()
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

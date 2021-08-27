@@ -2,10 +2,10 @@ package app.suhocki.diframeworksoverview.presentation.utils
 
 import androidx.fragment.app.FragmentFactory
 import app.suhocki.diframeworksoverview.di.app.AppComponent
+import app.suhocki.diframeworksoverview.di.app.SettingsComponentProxy
 import app.suhocki.diframeworksoverview.di.login.LoginComponent
 import app.suhocki.diframeworksoverview.presentation.account.AccountFragment
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragment
 
 class FragmentFactory : FragmentFactory() {
 
@@ -18,8 +18,8 @@ class FragmentFactory : FragmentFactory() {
             AppComponent.get().getAccountFragment()
         }
 
-        SettingsFragment::class.qualifiedName -> {
-            AppComponent.get().getSettingsFragment()
+        "app.suhocki.settings.SettingsFragment" -> {
+            SettingsComponentProxy.getSettingsFragment()
         }
 
         else -> super.instantiate(classLoader, className)

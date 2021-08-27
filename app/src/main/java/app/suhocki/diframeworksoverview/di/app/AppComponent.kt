@@ -2,8 +2,8 @@ package app.suhocki.diframeworksoverview.di.app
 
 import android.content.Context
 import app.suhocki.diframeworksoverview.di.login.LoginComponent
+import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.account.AccountFragment
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragment
 import dagger.BindsInstance
 import dagger.Component
 
@@ -14,7 +14,7 @@ interface AppComponent {
 
     fun getAccountFragment(): AccountFragment
 
-    fun getSettingsFragment(): SettingsFragment
+    fun getPreferences(): Preferences
 
     @Component.Builder
     interface Builder {
