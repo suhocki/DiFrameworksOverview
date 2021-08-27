@@ -46,7 +46,7 @@ class AccountFragment @Inject constructor(
     }
 
     private fun openSettings() {
-        val fragment = SettingsComponentProxy.getSettingsFragment()
+        val fragment = SettingsComponentProxy.get().getSettingsFragment()
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

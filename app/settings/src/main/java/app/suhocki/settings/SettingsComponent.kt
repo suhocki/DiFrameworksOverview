@@ -1,26 +1,24 @@
 package app.suhocki.settings
 
 import app.suhocki.diframeworksoverview.di.app.AppComponent
+import app.suhocki.diframeworksoverview.di.app.SettingsComponentProxy
 import dagger.Component
 
 @Component(dependencies = [AppComponent::class])
-interface SettingsComponent {
+interface SettingsComponent : SettingsComponentProxy {
 
-    fun getSettingsFragment(): SettingsFragment
+    override fun getSettingsFragment(): SettingsFragment
 
     companion object {
         private var instance: SettingsComponent? = null
 
         @JvmStatic
-        fun initialize(appComponent: AppComponent) {
-            instance ?: run {
-                instance = DaggerSettingsComponent.builder()
-                    .appComponent(appComponent)
-                    .build()
-            }
+        fun get() = instance ?: run {
+            return DaggerSettingsComponent.builder()
+                .appComponent(AppComponent.get())
+                .build().apply {
+                    instance = this
+                }
         }
-
-        @JvmStatic
-        fun get() = requireNotNull(instance)
     }
 }

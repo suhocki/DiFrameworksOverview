@@ -19,7 +19,7 @@ class FragmentFactory : FragmentFactory() {
         }
 
         "app.suhocki.settings.SettingsFragment" -> {
-            SettingsComponentProxy.getSettingsFragment()
+            SettingsComponentProxy.get().getSettingsFragment()
         }
 
         else -> super.instantiate(classLoader, className)
