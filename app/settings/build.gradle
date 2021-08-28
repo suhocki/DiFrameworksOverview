@@ -33,4 +33,8 @@ dependencies {
     implementation 'com.github.kirich1409:viewbindingpropertydelegate:1.4.7'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha03'
+
+    def koin_version= "3.1.2"
+    implementation "io.insert-koin:koin-core:$koin_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
 }

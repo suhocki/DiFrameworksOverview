@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import app.suhocki.diframeworksoverview.di.toScopeID
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
 import app.suhocki.diframeworksoverview.presentation.login.loginModule
+import app.suhocki.diframeworksoverview.presentation.settings.settingsModule
 import app.suhocki.diframeworksoverview.presentation.utils.FragmentFactory
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
 
         startKoin {
             androidContext(applicationContext)
-            modules(mainModule())
+            modules(mainModule(), settingsModule())
         }
 
         getKoin().createScope<MainActivity>(MainActivity::class.toScopeID())

@@ -13,7 +13,6 @@ import app.suhocki.diframeworksoverview.data.user.EncryptedSharedPreferencesProv
 import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.account.AccountFragment
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragment
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.factory
@@ -28,7 +27,6 @@ fun mainModule() = module {
         factory<ErrorHandler>()
         factory<SecurityManager>()
         factory<AccountFragment>()
-        factory<SettingsFragment>()
 
         factory<DeviceController>()
 
