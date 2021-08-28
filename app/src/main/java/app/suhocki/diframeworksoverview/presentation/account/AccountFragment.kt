@@ -10,7 +10,6 @@ import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
 import app.suhocki.diframeworksoverview.di.toScopeID
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragment
 import by.kirich1409.viewbindingdelegate.viewBinding
 import org.koin.android.ext.android.getKoin
 

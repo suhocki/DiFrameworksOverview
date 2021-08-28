@@ -1,2 +1,3 @@
 rootProject.name = "DiFrameworksOverview"
 include ':app'
+include ':app:settings'
