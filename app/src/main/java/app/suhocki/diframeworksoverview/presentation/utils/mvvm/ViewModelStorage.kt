@@ -14,29 +14,32 @@ import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
 
 object ViewModelStorage {
-    val storage = mutableMapOf<String, Any>()
+    val storage = mutableMapOf<String, ViewModel>()
 
-    inline fun <reified T> getViewModel(context: Context): T {
+    inline fun <reified T : ViewModel> getViewModel(context: Context): T {
         val key = requireNotNull(T::class.qualifiedName)
 
         return storage.getOrElse(key) {
-            val viewModel = createViewModel<T>(context)
-
-            storage[key] = viewModel as Any
-
-            viewModel
+            createViewModel<T>(context).also {
+                storage[key] = it
+            }
         } as T
     }
 
     fun clearAll() {
+        storage.values.forEach {
+            it.clear()
+        }
         storage.clear()
     }
 
     inline fun <reified T> clear() {
-        storage.remove(T::class.qualifiedName)
+        val key = requireNotNull(T::class.qualifiedName)
+        storage[key]?.clear()
+        storage.remove(key)
     }
 
-    inline fun <reified T> createViewModel(context: Context): T {
+    inline fun <reified T : ViewModel> createViewModel(context: Context): T {
         return when (T::class) {
 
             LoginViewModel::class -> {
