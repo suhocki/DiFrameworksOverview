@@ -66,6 +66,7 @@ class LoginFragment(
     override fun onDestroy() {
         super.onDestroy()
         if (isRemoving) {
+            LoginViewModel.clear()
             KTP.closeScope(LoginFragment::class)
         }
     }

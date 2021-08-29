@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import toothpick.InjectConstructor
+import toothpick.ktp.KTP
+import toothpick.ktp.extension.getInstance
 
 @InjectConstructor
 class LoginViewModel(
@@ -49,5 +51,15 @@ class LoginViewModel(
 
     private inline fun <T> MutableStateFlow<T>.emit(block: T.() -> T) {
         value = value.block()
+    }
+
+    companion object {
+        fun clear() {
+            if (KTP.isScopeOpen(LoginFragment::class)) {
+                KTP.openScope(LoginFragment::class)
+                    .getInstance<LoginViewModel>()
+                    .clear()
+            }
+        }
     }
 }

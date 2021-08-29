@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
+import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
 import app.suhocki.diframeworksoverview.presentation.login.loginModule
 import app.suhocki.diframeworksoverview.presentation.utils.FragmentFactory
 import toothpick.ktp.KTP
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     init {
         lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY && !isChangingConfigurations) {
+                LoginViewModel.clear()
                 KTP.closeScope(MainActivity::class)
             }
         })
