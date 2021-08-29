@@ -69,7 +69,10 @@ class LoginFragment(
     override fun onDestroy() {
         super.onDestroy()
         if (isRemoving) {
-            getKoin().getScope(LoginFragment::class.toScopeID()).close()
+            with(getKoin().getScope(LoginFragment::class.toScopeID())) {
+                get<LoginViewModel>().clear()
+                close()
+            }
         }
     }
 

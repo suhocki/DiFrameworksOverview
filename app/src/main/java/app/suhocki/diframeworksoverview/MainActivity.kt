@@ -6,6 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import app.suhocki.diframeworksoverview.di.toScopeID
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
+import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
 import app.suhocki.diframeworksoverview.presentation.login.loginModule
 import app.suhocki.diframeworksoverview.presentation.settings.settingsModule
 import app.suhocki.diframeworksoverview.presentation.utils.FragmentFactory
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     init {
         lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY && !isChangingConfigurations) {
+                getKoin().getScope(LoginFragment::class.toScopeID()).get<LoginViewModel>().clear()
+                getKoin().getScope(LoginFragment::class.toScopeID()).close()
                 getKoin().getScope(MainActivity::class.toScopeID()).close()
             }
         })
@@ -38,16 +41,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initKoin() {
-        if (GlobalContext.getOrNull() != null) {
-            return
+        if (GlobalContext.getOrNull() == null) {
+            startKoin {
+                androidContext(applicationContext)
+                modules(mainModule(), settingsModule())
+            }
         }
 
-        startKoin {
-            androidContext(applicationContext)
-            modules(mainModule(), settingsModule())
-        }
-
-        getKoin().createScope<MainActivity>(MainActivity::class.toScopeID())
+        getKoin().getOrCreateScope<MainActivity>(MainActivity::class.toScopeID())
+        loadKoinModules(mainModule())
     }
 
     private fun navigateToLogin() {
