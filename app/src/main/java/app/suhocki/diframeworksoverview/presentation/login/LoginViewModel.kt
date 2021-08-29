@@ -5,6 +5,7 @@ import app.suhocki.diframeworksoverview.data.error.ErrorHandler
 import app.suhocki.diframeworksoverview.data.user.UserManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -37,6 +38,10 @@ class LoginViewModel(
             errorHandler.onError(error)
             _screenState.emit { copy(isProgress = false) }
         }
+    }
+
+    fun clear() {
+        coroutineScope.cancel()
     }
 
     private inline fun <T> MutableStateFlow<T>.emit(block: T.() -> T) {
