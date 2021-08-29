@@ -3,6 +3,7 @@ package app.suhocki.diframeworksoverview.presentation.login
 import app.suhocki.diframeworksoverview.data.authorization.LoginRepository
 import app.suhocki.diframeworksoverview.data.error.ErrorHandler
 import app.suhocki.diframeworksoverview.data.user.UserManager
+import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -14,7 +15,7 @@ class LoginViewModel(
     val errorHandler: ErrorHandler,
     private val userManager: UserManager,
     private val loginRepository: LoginRepository,
-) {
+): ViewModel {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private val _screenState = MutableStateFlow(LoginFragment.ScreenState())
 
@@ -40,7 +41,7 @@ class LoginViewModel(
         }
     }
 
-    fun clear() {
+    override fun clear() {
         coroutineScope.cancel()
     }
 
