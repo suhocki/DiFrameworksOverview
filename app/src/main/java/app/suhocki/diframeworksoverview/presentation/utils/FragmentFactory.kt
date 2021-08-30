@@ -10,7 +10,7 @@ import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.presentation.account.AccountFragment
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
 import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragmentProxy
+import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragmentProvider
 import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
 
 class FragmentFactory(
@@ -32,13 +32,8 @@ class FragmentFactory(
             AccountFragment(preferences, userManager)
         }
 
-        SettingsFragmentProxy.QUALIFIED_NAME -> {
-            val encryptedSharedPreferences = createEncryptedSharedPreferences()
-            val userManager = UserManager(encryptedSharedPreferences)
-            val currentUser = userManager.currentUser
-            val sharedPreferences = context.getSharedPreferences(currentUser, Context.MODE_PRIVATE)
-            val preferences = SharedPreferencesWrapper(sharedPreferences)
-            SettingsFragmentProxy.create(preferences)
+        "app.suhocki.settings.SettingsFragment" -> {
+            SettingsFragmentProvider.get().getSettingsFragment(context)
         }
 
         else -> super.instantiate(classLoader, className)

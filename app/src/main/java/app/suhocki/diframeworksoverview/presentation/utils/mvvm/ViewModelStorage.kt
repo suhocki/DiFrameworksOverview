@@ -3,6 +3,7 @@ package app.suhocki.diframeworksoverview.presentation.utils.mvvm
 import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.annotation.RestrictTo
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import app.suhocki.diframeworksoverview.data.authorization.AuthorizationApi
@@ -59,6 +60,7 @@ object ViewModelStorage {
         }
     }
 
+    @RestrictTo(RestrictTo.Scope.SUBCLASSES)
     fun createEncryptedSharedPreferences(context: Context): SharedPreferences {
         return EncryptedSharedPreferences.create(
             context,
