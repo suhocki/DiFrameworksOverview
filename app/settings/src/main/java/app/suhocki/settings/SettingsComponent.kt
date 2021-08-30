@@ -1,13 +1,12 @@
 package app.suhocki.settings
 
 import app.suhocki.diframeworksoverview.di.app.AppComponent
-import app.suhocki.diframeworksoverview.di.app.SettingsComponentProxy
 import dagger.Component
 
 @Component(dependencies = [AppComponent::class])
-interface SettingsComponent : SettingsComponentProxy {
+interface SettingsComponent {
 
-    override fun getSettingsFragment(): SettingsFragment
+    fun getSettingsFragment(): SettingsFragment
 
     companion object {
         private var instance: SettingsComponent? = null

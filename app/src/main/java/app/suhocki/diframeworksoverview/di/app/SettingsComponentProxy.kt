@@ -1,6 +1,7 @@
 package app.suhocki.diframeworksoverview.di.app
 
 import androidx.fragment.app.Fragment
+import java.util.*
 
 interface SettingsComponentProxy {
 
@@ -8,8 +9,6 @@ interface SettingsComponentProxy {
 
     companion object {
         fun get(): SettingsComponentProxy =
-            Class.forName("app.suhocki.settings.SettingsComponent")
-                .getMethod("get")
-                .invoke(null) as SettingsComponentProxy
+            ServiceLoader.load(SettingsComponentProxy::class.java).first()
     }
 }
