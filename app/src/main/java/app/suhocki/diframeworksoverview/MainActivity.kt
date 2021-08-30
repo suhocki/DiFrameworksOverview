@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         if (GlobalContext.getOrNull() == null) {
             startKoin {
                 androidContext(applicationContext)
-                modules(mainModule(), settingsModule())
+                modules(mainModule())
             }
         }
 

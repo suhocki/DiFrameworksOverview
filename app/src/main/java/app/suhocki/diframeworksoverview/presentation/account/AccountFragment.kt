@@ -10,9 +10,12 @@ import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
 import app.suhocki.diframeworksoverview.di.toScopeID
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
+import app.suhocki.diframeworksoverview.presentation.settings.SettingsModuleProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import org.koin.android.ext.android.getKoin
+import org.koin.core.context.loadKoinModules
 import org.koin.core.scope.get
+import java.util.*
 
 class AccountFragment(
     private val preferences: Preferences,
@@ -50,6 +53,10 @@ class AccountFragment(
     }
 
     private fun openSettings() {
+        val settingsModuleProvider =
+            ServiceLoader.load(SettingsModuleProvider::class.java).first()
+        loadKoinModules(settingsModuleProvider.getSettingsModule())
+
         val accountScope = getKoin().getScope(AccountFragment::class.toScopeID())
         val fragmentClass = Class.forName("app.suhocki.settings.SettingsFragment")
         val settingsScope =
