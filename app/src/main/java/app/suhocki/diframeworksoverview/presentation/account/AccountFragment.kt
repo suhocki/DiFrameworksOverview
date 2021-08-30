@@ -10,7 +10,7 @@ import app.suhocki.diframeworksoverview.di.Kodein
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
 import app.suhocki.diframeworksoverview.presentation.login.LoginScope
-import app.suhocki.diframeworksoverview.presentation.settings.settingsModule
+import app.suhocki.diframeworksoverview.presentation.settings.SettingsModuleProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import org.kodein.di.direct
 import org.kodein.di.instance
@@ -50,7 +50,8 @@ class AccountFragment(
     }
 
     private fun openSettings() {
-        Kodein.addModule(settingsModule())
+        val settingsModule = SettingsModuleProvider.get().getSettingsModule()
+        Kodein.addModule(settingsModule)
 
         val fragment = Kodein.instance.direct
             .instance<Fragment>("app.suhocki.settings.SettingsFragment")
