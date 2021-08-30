@@ -1,11 +1,12 @@
 package app.suhocki.settings
 
 import androidx.fragment.app.Fragment
-import app.suhocki.diframeworksoverview.di.app.SettingsComponentProxy
-import org.kohsuke.MetaInfServices
+import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragmentProvider
+import com.google.auto.service.AutoService
 
-@MetaInfServices
-class SettingsFragmentProvider : SettingsComponentProxy {
+@AutoService(SettingsFragmentProvider::class)
+class SettingsFragmentProvider : SettingsFragmentProvider {
+
     override fun getSettingsFragment(): Fragment {
         return SettingsComponent.get().getSettingsFragment()
     }
