@@ -10,7 +10,6 @@ import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
 import app.suhocki.diframeworksoverview.presentation.login.loginModule
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragmentProxy
 import by.kirich1409.viewbindingdelegate.viewBinding
 import toothpick.InjectConstructor
 import toothpick.ktp.KTP
@@ -52,8 +51,8 @@ class AccountFragment(
     }
 
     private fun openSettings() {
-        val fragmentClass = Class.forName(SettingsFragmentProxy.QUALIFIED_NAME)
-        val fragment = KTP.openScopes(AccountFragment::class, fragmentClass)
+        val fragmentClass = Class.forName("app.suhocki.settings.SettingsFragment")
+        val fragment = KTP.openScopes(AccountFragment::class, fragmentClass.kotlin)
             .getInstance(fragmentClass) as Fragment
 
         parentFragmentManager.beginTransaction()
