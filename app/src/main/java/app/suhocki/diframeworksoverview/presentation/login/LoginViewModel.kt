@@ -3,7 +3,6 @@ package app.suhocki.diframeworksoverview.presentation.login
 import app.suhocki.diframeworksoverview.data.authorization.LoginRepository
 import app.suhocki.diframeworksoverview.data.error.ErrorHandler
 import app.suhocki.diframeworksoverview.data.user.UserManager
-import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -15,15 +14,15 @@ class LoginViewModel(
     val errorHandler: ErrorHandler,
     private val userManager: UserManager,
     private val loginRepository: LoginRepository,
-): ViewModel {
+) {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private val _screenState = MutableStateFlow(LoginFragment.ScreenState())
 
     val screenState: Flow<LoginFragment.ScreenState> = _screenState
 
     init {
-        if (userManager.currentUser != null) {
-            _screenState.emit { copy(isLoginCompleted = true) }
+        userManager.currentUser?.let { userName ->
+            _screenState.emit { copy(userName = userName) }
         }
     }
 
@@ -34,14 +33,14 @@ class LoginViewModel(
         }.onSuccess { securityToken ->
             userManager.currentUser = user
             userManager.securityToken = securityToken
-            _screenState.emit { copy(isLoginCompleted = true) }
+            _screenState.emit { copy(userName = user) }
         }.onFailure { error ->
             errorHandler.onError(error)
             _screenState.emit { copy(isProgress = false) }
         }
     }
 
-    override fun clear() {
+    fun clear() {
         coroutineScope.cancel()
     }
 
