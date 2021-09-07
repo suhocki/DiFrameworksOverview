@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import app.suhocki.diframeworksoverview.R
 import app.suhocki.diframeworksoverview.data.preferences.UserPreferences
 import app.suhocki.diframeworksoverview.databinding.FragmentSettingsBinding
+import app.suhocki.diframeworksoverview.di.AppScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 
 class SettingsFragment(
@@ -21,6 +22,13 @@ class SettingsFragment(
         viewBinding.notifications.isChecked = userPreferences.isNotificationsEnabled
         viewBinding.notifications.setOnCheckedChangeListener { _, isChecked ->
             userPreferences.isNotificationsEnabled = isChecked
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isRemoving) {
+            AppScope.requireUserScope().clearSettingsScope()
         }
     }
 }

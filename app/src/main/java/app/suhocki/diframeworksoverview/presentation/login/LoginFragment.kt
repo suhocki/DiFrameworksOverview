@@ -48,6 +48,7 @@ class LoginFragment(
 
     private fun navigateToAccount(userName: String) {
         AppScope.openUserScope(userName)
+
         val accountScope = AppScope.requireUserScope().accountScope
         val fragment = accountScope.accountFragment
 

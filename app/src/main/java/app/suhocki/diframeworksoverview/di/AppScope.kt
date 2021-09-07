@@ -47,8 +47,17 @@ object AppScope {
 
     fun requireUserScope() = requireNotNull(userScope)
 
+    fun clear() {
+        clearLoginScope()
+    }
+
     fun clearLoginScope() {
         loginScope?.clear()
         loginScope = null
+    }
+
+    fun clearUserScope() {
+        userScope?.clear()
+        userScope = null
     }
 }

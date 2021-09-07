@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
     init {
         lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY && !isChangingConfigurations) {
-                AppScope.clearLoginScope()
+                AppScope.clear()
             }
         })
     }

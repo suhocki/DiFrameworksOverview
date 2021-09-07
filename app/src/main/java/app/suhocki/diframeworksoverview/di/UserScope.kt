@@ -27,4 +27,17 @@ class UserScope(
         get() = _settingsScope ?: SettingsScopeProvider.get().getSettingsScope(this)
             .also { _settingsScope = it }
 
+    fun clear() {
+        appScope.userManager.clear()
+        clearAccountScope()
+        clearSettingsScope()
+    }
+
+    fun clearAccountScope() {
+        _accountScope = null
+    }
+
+    fun clearSettingsScope() {
+        _settingsScope = null
+    }
 }

@@ -8,6 +8,7 @@ import app.suhocki.diframeworksoverview.data.preferences.UserPreferences
 import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
 import app.suhocki.diframeworksoverview.di.AppScope
+import app.suhocki.diframeworksoverview.di.UserScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 
 class AccountFragment(
@@ -16,24 +17,33 @@ class AccountFragment(
 ) : Fragment(R.layout.fragment_account) {
 
     private val viewBinding by viewBinding<FragmentAccountBinding>()
+    private lateinit var userScope: UserScope
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        userScope = AppScope.requireUserScope()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding.notifications.isEnabled = userPreferences.isNotificationsEnabled
-
-        viewBinding.logout.setOnClickListener {
-            userManager.clear()
-            openLogin()
+        with(viewBinding) {
+            notifications.isEnabled = userPreferences.isNotificationsEnabled
+            logout.setOnClickListener { openLogin() }
+            settings.setOnClickListener { openSettings() }
+            greeting.text = "Hello, ${userManager.currentUser}!"
         }
+    }
 
-        viewBinding.settings.setOnClickListener {
-            openSettings()
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isRemoving) {
+            userScope.clearAccountScope()
         }
-
-        viewBinding.greeting.text = "Hello, ${userManager.currentUser}!"
     }
 
     private fun openLogin() {
+        AppScope.clearUserScope()
+
         val fragment = AppScope.getOrCreateLoginScope().loginFragment
 
         parentFragmentManager.beginTransaction()
