@@ -4,8 +4,11 @@ import androidx.fragment.app.Fragment
 import java.util.*
 
 interface SettingsScope {
+    val module: Module
 
-    val settingsFragment: Fragment
+    interface Module {
+        val settingsFragment: Fragment
+    }
 
     companion object {
         fun get(): SettingsScope =

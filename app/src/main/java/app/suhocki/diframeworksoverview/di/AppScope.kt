@@ -1,5 +1,6 @@
 package app.suhocki.diframeworksoverview.di
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
@@ -8,56 +9,82 @@ import androidx.security.crypto.MasterKey
 import app.suhocki.diframeworksoverview.data.error.ErrorHandler
 import app.suhocki.diframeworksoverview.data.user.UserManager
 
+@SuppressLint("StaticFieldLeak")
 object AppScope {
-    private var application: Application? = null
+    private var module: Module? = null
 
-    val context: Context
-        get() = requireNotNull(application?.applicationContext)
+    val scopes by lazy {
+        with(requireNotNull(module)) {
+            Scopes(userManager, context, errorHandler)
+        }
+    }
 
     fun init(application: Application) {
-        this.application = application
+        module = Module(application)
     }
 
-    val errorHandler: ErrorHandler
-        get() = ErrorHandler()
+    class Module(
+        private val application: Application
+    ) {
+        val context: Context
+            get() = requireNotNull(application.applicationContext)
 
-    private val sharedPreferences: SharedPreferences
-        get() = EncryptedSharedPreferences.create(
-            context,
-            "encrypted_preferences",
-            MasterKey.Builder(context)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build(),
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+        val errorHandler: ErrorHandler
+            get() = ErrorHandler()
 
-    val userManager: UserManager
-        get() = UserManager(sharedPreferences)
+        private val sharedPreferences: SharedPreferences
+            get() = EncryptedSharedPreferences.create(
+                context,
+                "encrypted_preferences",
+                MasterKey.Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build(),
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
 
-    private var loginScope: LoginScope? = null
-    private var userScope: UserScope? = null
-
-    fun getOrCreateLoginScope() =
-        loginScope ?: LoginScope(this).also { loginScope = it }
-
-    fun openUserScope(userName: String) {
-        userScope = UserScope(this, userName)
+        val userManager: UserManager
+            get() = UserManager(sharedPreferences)
     }
 
-    fun requireUserScope() = requireNotNull(userScope)
+    class Scopes(
+        private val userManager: UserManager,
+        private val context: Context,
+        private val errorHandler: ErrorHandler,
+    ) {
+        val login = Login()
+        val user = User()
 
-    fun clear() {
-        clearLoginScope()
-    }
+        inner class Login {
+            private var loginScope: LoginScope? = null
 
-    fun clearLoginScope() {
-        loginScope?.clear()
-        loginScope = null
-    }
+            fun create() {
+                loginScope = LoginScope(context, errorHandler, userManager)
+            }
 
-    fun clearUserScope() {
-        userScope?.clear()
-        userScope = null
+            fun get() = requireNotNull(loginScope)
+
+            fun clear() {
+                loginScope?.clear()
+                loginScope = null
+            }
+        }
+
+        inner class User {
+            private var userScope: UserScope? = null
+
+            fun isOpen() = userScope != null
+
+            fun create(userName: String) {
+                userScope = UserScope(userManager, context, userName)
+            }
+
+            fun get() = requireNotNull(userScope)
+
+            fun clear() {
+                userScope?.clear()
+                userScope = null
+            }
+        }
     }
 }

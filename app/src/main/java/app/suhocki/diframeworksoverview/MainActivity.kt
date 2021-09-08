@@ -3,23 +3,13 @@ package app.suhocki.diframeworksoverview
 import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import app.suhocki.diframeworksoverview.di.AppScope
 import app.suhocki.diframeworksoverview.presentation.utils.FragmentFactory
 
 class MainActivity : AppCompatActivity() {
 
-    init {
-        lifecycle.addObserver(LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_DESTROY && !isChangingConfigurations) {
-                AppScope.clear()
-            }
-        })
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        supportFragmentManager.fragmentFactory = FragmentFactory(applicationContext)
+        supportFragmentManager.fragmentFactory = FragmentFactory()
         initDI()
 
         super.onCreate(savedInstanceState)
@@ -35,7 +25,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToLogin() {
-        val fragment = AppScope.getOrCreateLoginScope().loginFragment
+        val loginScope = with(AppScope.scopes.login) {
+            create()
+            get()
+        }
+
+        val fragment = loginScope.module.loginFragment
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

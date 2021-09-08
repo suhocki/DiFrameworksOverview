@@ -7,12 +7,16 @@ import app.suhocki.diframeworksoverview.R
 import app.suhocki.diframeworksoverview.data.preferences.UserPreferences
 import app.suhocki.diframeworksoverview.databinding.FragmentSettingsBinding
 import app.suhocki.diframeworksoverview.di.AppScope
+import app.suhocki.diframeworksoverview.di.UserScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 
 class SettingsFragment(
     private val userPreferences: UserPreferences
 ) : Fragment(R.layout.fragment_settings) {
     private val viewBinding: FragmentSettingsBinding by viewBinding()
+
+    private val userScope: UserScope
+        get() = AppScope.scopes.user.get()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,8 +31,8 @@ class SettingsFragment(
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isRemoving) {
-            AppScope.requireUserScope().clearSettingsScope()
+        if (!requireActivity().isChangingConfigurations) {
+            userScope.scopes.settings.clear()
         }
     }
 }

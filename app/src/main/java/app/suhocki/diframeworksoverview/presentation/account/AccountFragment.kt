@@ -17,12 +17,9 @@ class AccountFragment(
 ) : Fragment(R.layout.fragment_account) {
 
     private val viewBinding by viewBinding<FragmentAccountBinding>()
-    private lateinit var userScope: UserScope
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        userScope = AppScope.requireUserScope()
-    }
+    private val userScope: UserScope
+        get() = AppScope.scopes.user.get()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,15 +33,21 @@ class AccountFragment(
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isRemoving) {
-            userScope.clearAccountScope()
+        if (!requireActivity().isChangingConfigurations) {
+            if (AppScope.scopes.user.isOpen()) {
+                userScope.scopes.account.clear()
+            }
         }
     }
 
     private fun openLogin() {
-        AppScope.clearUserScope()
+        val loginScope = with(AppScope.scopes) {
+            user.clear()
+            login.create()
+            login.get()
+        }
 
-        val fragment = AppScope.getOrCreateLoginScope().loginFragment
+        val fragment = loginScope.module.loginFragment
 
         parentFragmentManager.beginTransaction()
             .remove(this)
@@ -53,7 +56,12 @@ class AccountFragment(
     }
 
     private fun openSettings() {
-        val fragment = AppScope.requireUserScope().settingsScope.settingsFragment
+        val settingsScope = with(userScope.scopes.settings) {
+            create()
+            get()
+        }
+
+        val fragment = settingsScope.module.settingsFragment
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

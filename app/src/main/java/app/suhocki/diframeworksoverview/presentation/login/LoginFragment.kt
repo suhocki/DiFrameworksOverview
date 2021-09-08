@@ -47,10 +47,17 @@ class LoginFragment(
     }
 
     private fun navigateToAccount(userName: String) {
-        AppScope.openUserScope(userName)
+        val userScope = with(AppScope.scopes.user) {
+            create(userName)
+            get()
+        }
 
-        val accountScope = AppScope.requireUserScope().accountScope
-        val fragment = accountScope.accountFragment
+        val accountScope = with(userScope.scopes.account) {
+            create()
+            get()
+        }
+
+        val fragment = accountScope.module.accountFragment
 
         parentFragmentManager.beginTransaction()
             .remove(this)
@@ -60,8 +67,8 @@ class LoginFragment(
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isRemoving) {
-            AppScope.clearLoginScope()
+        if (!requireActivity().isChangingConfigurations) {
+            AppScope.scopes.login.clear()
         }
     }
 
