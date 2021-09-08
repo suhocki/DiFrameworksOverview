@@ -3,14 +3,11 @@ package app.suhocki.diframeworksoverview.di.scope
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import app.suhocki.diframeworksoverview.data.error.ErrorHandler
 import app.suhocki.diframeworksoverview.data.user.UserManager
-import app.suhocki.diframeworksoverview.di.Module
 import app.suhocki.diframeworksoverview.di.Scope
 import app.suhocki.diframeworksoverview.di.ScopeHolder
+import app.suhocki.diframeworksoverview.di.module.AppModule
 
 @SuppressLint("StaticFieldLeak")
 object AppScope : Scope {
@@ -28,45 +25,21 @@ object AppScope : Scope {
         this.application = application
     }
 
-    class AppModule(
-        private val application: Application
-    ) : Module {
-        val context: Context
-            get() = requireNotNull(application.applicationContext)
-
-        val errorHandler: ErrorHandler
-            get() = ErrorHandler()
-
-        private val sharedPreferences: SharedPreferences
-            get() = EncryptedSharedPreferences.create(
-                context,
-                "encrypted_preferences",
-                MasterKey.Builder(context)
-                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                    .build(),
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-
-        val userManager: UserManager
-            get() = UserManager(sharedPreferences)
-    }
-
     class Scopes(
         private val userManager: UserManager,
         private val context: Context,
         private val errorHandler: ErrorHandler,
     ) {
-        val login = Login()
-        val user = User()
+        val login = LoginScopeHolder()
+        val user = UserScopeHolder()
 
-        inner class Login : ScopeHolder<LoginScope>() {
+        inner class LoginScopeHolder : ScopeHolder<LoginScope>() {
             override fun create() {
                 scope = LoginScope(context, errorHandler, userManager)
             }
         }
 
-        inner class User : ScopeHolder<UserScope>() {
+        inner class UserScopeHolder : ScopeHolder<UserScope>() {
             private var userName: String? = null
 
             fun create(userName: String) {
