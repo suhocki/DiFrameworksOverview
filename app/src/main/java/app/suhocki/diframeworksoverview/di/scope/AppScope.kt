@@ -1,4 +1,4 @@
-package app.suhocki.diframeworksoverview.di
+package app.suhocki.diframeworksoverview.di.scope
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -8,24 +8,29 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import app.suhocki.diframeworksoverview.data.error.ErrorHandler
 import app.suhocki.diframeworksoverview.data.user.UserManager
+import app.suhocki.diframeworksoverview.di.Module
+import app.suhocki.diframeworksoverview.di.Scope
+import app.suhocki.diframeworksoverview.di.ScopeHolder
 
 @SuppressLint("StaticFieldLeak")
-object AppScope {
-    private var module: Module? = null
+object AppScope : Scope {
+    private var application: Application? = null
+
+    override val module: AppModule by lazy {
+        AppModule(requireNotNull(application))
+    }
 
     val scopes by lazy {
-        with(requireNotNull(module)) {
-            Scopes(userManager, context, errorHandler)
-        }
+        with(module) { Scopes(userManager, context, errorHandler) }
     }
 
     fun init(application: Application) {
-        module = Module(application)
+        this.application = application
     }
 
-    class Module(
+    class AppModule(
         private val application: Application
-    ) {
+    ) : Module {
         val context: Context
             get() = requireNotNull(application.applicationContext)
 
@@ -55,35 +60,27 @@ object AppScope {
         val login = Login()
         val user = User()
 
-        inner class Login {
-            private var loginScope: LoginScope? = null
-
-            fun create() {
-                loginScope = LoginScope(context, errorHandler, userManager)
-            }
-
-            fun get() = requireNotNull(loginScope)
-
-            fun clear() {
-                loginScope?.clear()
-                loginScope = null
+        inner class Login : ScopeHolder<LoginScope>() {
+            override fun create() {
+                scope = LoginScope(context, errorHandler, userManager)
             }
         }
 
-        inner class User {
-            private var userScope: UserScope? = null
-
-            fun isOpen() = userScope != null
+        inner class User : ScopeHolder<UserScope>() {
+            private var userName: String? = null
 
             fun create(userName: String) {
-                userScope = UserScope(userManager, context, userName)
+                this.userName = userName
+                create()
             }
 
-            fun get() = requireNotNull(userScope)
+            override fun create() {
+                scope = UserScope(userManager, context, requireNotNull(userName))
+            }
 
-            fun clear() {
-                userScope?.clear()
-                userScope = null
+            override fun clear() {
+                super.clear()
+                userName = null
             }
         }
     }

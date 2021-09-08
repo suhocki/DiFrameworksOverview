@@ -1,7 +1,7 @@
 package app.suhocki.diframeworksoverview.presentation.utils
 
 import androidx.fragment.app.FragmentFactory
-import app.suhocki.diframeworksoverview.di.AppScope
+import app.suhocki.diframeworksoverview.di.scope.AppScope
 import app.suhocki.diframeworksoverview.presentation.account.AccountFragment
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
 

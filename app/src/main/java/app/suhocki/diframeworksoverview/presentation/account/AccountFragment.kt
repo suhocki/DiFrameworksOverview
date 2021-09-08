@@ -7,8 +7,8 @@ import app.suhocki.diframeworksoverview.R
 import app.suhocki.diframeworksoverview.data.preferences.UserPreferences
 import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
-import app.suhocki.diframeworksoverview.di.AppScope
-import app.suhocki.diframeworksoverview.di.UserScope
+import app.suhocki.diframeworksoverview.di.scope.AppScope
+import app.suhocki.diframeworksoverview.di.scope.UserScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 
 class AccountFragment(

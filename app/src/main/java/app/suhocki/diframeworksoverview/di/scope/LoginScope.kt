@@ -1,4 +1,4 @@
-package app.suhocki.diframeworksoverview.di
+package app.suhocki.diframeworksoverview.di.scope
 
 import android.content.ContentResolver
 import android.content.Context
@@ -9,6 +9,8 @@ import app.suhocki.diframeworksoverview.data.device.DeviceController
 import app.suhocki.diframeworksoverview.data.error.ErrorHandler
 import app.suhocki.diframeworksoverview.data.security.SecurityManager
 import app.suhocki.diframeworksoverview.data.user.UserManager
+import app.suhocki.diframeworksoverview.di.Module
+import app.suhocki.diframeworksoverview.di.Scope
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
 import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
 
@@ -16,14 +18,10 @@ class LoginScope(
     private val context: Context,
     private val errorHandler: ErrorHandler,
     private val userManager: UserManager,
-) {
-    val module = Module()
+) : Scope {
+    override val module = LoginModule()
 
-    fun clear() {
-        module.clear()
-    }
-
-    inner class Module {
+    inner class LoginModule : Module {
         private val contentResolver: ContentResolver
             get() = context.contentResolver
 
@@ -44,7 +42,7 @@ class LoginScope(
         val loginFragment: Fragment
             get() = LoginFragment(loginViewModel)
 
-        fun clear() {
+        override fun clear() {
             loginViewModel.clear()
         }
     }

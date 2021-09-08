@@ -10,9 +10,9 @@ import com.google.auto.service.AutoService
 class SettingsScope(
     private val userPreferences: UserPreferences
 ) : SettingsScope {
-    override val module = Module()
+    override val module = SettingsModule()
 
-    inner class Module : SettingsScope.Module {
+    inner class SettingsModule : SettingsScope.SettingsModule {
 
         override val settingsFragment: Fragment
             get() = SettingsFragment(userPreferences)

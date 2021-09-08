@@ -9,7 +9,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import app.suhocki.diframeworksoverview.R
 import app.suhocki.diframeworksoverview.databinding.FragmentLoginBinding
-import app.suhocki.diframeworksoverview.di.AppScope
+import app.suhocki.diframeworksoverview.di.scope.AppScope
 import app.suhocki.diframeworksoverview.presentation.utils.showSnackbar
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.collect

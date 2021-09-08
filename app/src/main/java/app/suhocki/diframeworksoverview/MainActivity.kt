@@ -3,7 +3,7 @@ package app.suhocki.diframeworksoverview
 import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import app.suhocki.diframeworksoverview.di.AppScope
+import app.suhocki.diframeworksoverview.di.scope.AppScope
 import app.suhocki.diframeworksoverview.presentation.utils.FragmentFactory
 
 class MainActivity : AppCompatActivity() {
