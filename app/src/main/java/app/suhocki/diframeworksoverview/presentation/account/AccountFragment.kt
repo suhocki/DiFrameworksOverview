@@ -1,20 +1,21 @@
 package app.suhocki.diframeworksoverview.presentation.account
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
+import app.suhocki.diframeworksoverview.MainActivity
 import app.suhocki.diframeworksoverview.R
 import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
+import app.suhocki.diframeworksoverview.di.toScopeID
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
-import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragmentProvider
-import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
+import app.suhocki.diframeworksoverview.presentation.settings.SettingsModuleProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
+import org.koin.android.ext.android.getKoin
+import org.koin.core.context.loadKoinModules
+import org.koin.core.scope.get
+import java.util.*
 
 class AccountFragment(
     private val preferences: Preferences,
@@ -40,9 +41,10 @@ class AccountFragment(
     }
 
     private fun openLogin() {
-        val viewModel: LoginViewModel =
-            ViewModelStorage.getViewModel(requireContext().applicationContext)
-        val fragment = LoginFragment(viewModel)
+        val mainActivityScope = getKoin().getScope(MainActivity::class.toScopeID())
+        val loginScope = getKoin().createScope<LoginFragment>(LoginFragment::class.toScopeID())
+        loginScope.linkTo(mainActivityScope)
+        val fragment = loginScope.get<LoginFragment>()
 
         parentFragmentManager.beginTransaction()
             .remove(this)
@@ -51,23 +53,20 @@ class AccountFragment(
     }
 
     private fun openSettings() {
-        val fragment = SettingsFragmentProvider.get().getSettingsFragment(requireContext())
+        val settingsModuleProvider =
+            ServiceLoader.load(SettingsModuleProvider::class.java).first()
+        loadKoinModules(settingsModuleProvider.getSettingsModule())
+
+        val accountScope = getKoin().getScope(AccountFragment::class.toScopeID())
+        val fragmentClass = Class.forName("app.suhocki.settings.SettingsFragment")
+        val settingsScope =
+            getKoin().getOrCreateScope<MainActivity>(fragmentClass.kotlin.toScopeID())
+        settingsScope.linkTo(accountScope)
+        val fragment = settingsScope.get<Fragment>(fragmentClass)
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack("settings")
             .commit()
-    }
-
-    private fun createEncryptedSharedPreferences(): SharedPreferences {
-        return EncryptedSharedPreferences.create(
-            requireContext(),
-            "encrypted_preferences",
-            MasterKey.Builder(requireContext())
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build(),
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
     }
 }
