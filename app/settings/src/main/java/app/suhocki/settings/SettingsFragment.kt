@@ -7,7 +7,9 @@ import app.suhocki.diframeworksoverview.R
 import app.suhocki.diframeworksoverview.databinding.FragmentSettingsBinding
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import by.kirich1409.viewbindingdelegate.viewBinding
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class SettingsFragment(
     private val preferences: Preferences
 ) : Fragment(R.layout.fragment_settings) {

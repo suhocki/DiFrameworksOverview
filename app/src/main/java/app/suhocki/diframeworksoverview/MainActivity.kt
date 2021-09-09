@@ -6,21 +6,25 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
 import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
+import app.suhocki.diframeworksoverview.presentation.login.loginModule
 import app.suhocki.diframeworksoverview.presentation.utils.FragmentFactory
-import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
+import toothpick.ktp.KTP
+import toothpick.ktp.extension.getInstance
 
 class MainActivity : AppCompatActivity() {
 
     init {
         lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY && !isChangingConfigurations) {
-                ViewModelStorage.clearAll()
+                LoginViewModel.clear()
+                KTP.closeScope(MainActivity::class)
             }
         })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        supportFragmentManager.fragmentFactory = FragmentFactory(applicationContext)
+        supportFragmentManager.fragmentFactory = FragmentFactory()
+        initToothpick()
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,9 +34,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initToothpick() {
+        KTP.openRootScope()
+            .openSubScope(MainActivity::class)
+            .installModules(globalModule(applicationContext))
+    }
+
     private fun navigateToLogin() {
-        val viewModel: LoginViewModel = ViewModelStorage.getViewModel(applicationContext)
-        val fragment = LoginFragment(viewModel)
+        val fragment = KTP.openScopes(MainActivity::class, LoginFragment::class)
+            .installModules(loginModule())
+            .getInstance<LoginFragment>()
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

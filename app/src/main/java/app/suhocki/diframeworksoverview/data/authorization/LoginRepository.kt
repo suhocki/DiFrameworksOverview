@@ -1,7 +1,9 @@
 package app.suhocki.diframeworksoverview.data.authorization
 
 import app.suhocki.diframeworksoverview.data.security.SecurityManager
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class LoginRepository(
     private val authorizationApi: AuthorizationApi,
     private val securityManager: SecurityManager
