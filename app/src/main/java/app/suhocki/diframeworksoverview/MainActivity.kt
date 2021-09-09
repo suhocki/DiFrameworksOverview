@@ -1,26 +1,16 @@
 package app.suhocki.diframeworksoverview
 
+import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
-import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
+import app.suhocki.diframeworksoverview.di.scope.AppScope
 import app.suhocki.diframeworksoverview.presentation.utils.FragmentFactory
-import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
 
 class MainActivity : AppCompatActivity() {
 
-    init {
-        lifecycle.addObserver(LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_DESTROY && !isChangingConfigurations) {
-                ViewModelStorage.clearAll()
-            }
-        })
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        supportFragmentManager.fragmentFactory = FragmentFactory(applicationContext)
+        supportFragmentManager.fragmentFactory = FragmentFactory()
+        initDI()
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,9 +20,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initDI() {
+        AppScope.init(applicationContext as Application)
+    }
+
     private fun navigateToLogin() {
-        val viewModel: LoginViewModel = ViewModelStorage.getViewModel(applicationContext)
-        val fragment = LoginFragment(viewModel)
+        val loginScope = with(AppScope.scopes.login) {
+            create()
+            get()
+        }
+
+        val fragment = loginScope.module.loginFragment
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

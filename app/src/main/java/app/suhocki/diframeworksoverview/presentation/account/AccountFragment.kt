@@ -1,48 +1,53 @@
 package app.suhocki.diframeworksoverview.presentation.account
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import app.suhocki.diframeworksoverview.R
+import app.suhocki.diframeworksoverview.data.preferences.UserPreferences
 import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
-import app.suhocki.diframeworksoverview.domain.preferences.Preferences
-import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
-import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragmentProvider
-import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
+import app.suhocki.diframeworksoverview.di.scope.AppScope
+import app.suhocki.diframeworksoverview.di.scope.UserScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 
 class AccountFragment(
-    private val preferences: Preferences,
+    private val userPreferences: UserPreferences,
     private val userManager: UserManager,
 ) : Fragment(R.layout.fragment_account) {
 
     private val viewBinding by viewBinding<FragmentAccountBinding>()
 
+    private val userScope: UserScope
+        get() = AppScope.scopes.user.get()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding.notifications.isEnabled = preferences.isNotificationsEnabled
-
-        viewBinding.logout.setOnClickListener {
-            userManager.clear()
-            openLogin()
+        with(viewBinding) {
+            notifications.isEnabled = userPreferences.isNotificationsEnabled
+            logout.setOnClickListener { openLogin() }
+            settings.setOnClickListener { openSettings() }
+            greeting.text = "Hello, ${userManager.currentUser}!"
         }
+    }
 
-        viewBinding.settings.setOnClickListener {
-            openSettings()
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!requireActivity().isChangingConfigurations) {
+            if (AppScope.scopes.user.isOpen()) {
+                userScope.scopes.account.clear()
+            }
         }
-
-        viewBinding.greeting.text = "Hello, ${userManager.currentUser}!"
     }
 
     private fun openLogin() {
-        val viewModel: LoginViewModel =
-            ViewModelStorage.getViewModel(requireContext().applicationContext)
-        val fragment = LoginFragment(viewModel)
+        val loginScope = with(AppScope.scopes) {
+            user.clear()
+            login.create()
+            login.get()
+        }
+
+        val fragment = loginScope.module.loginFragment
 
         parentFragmentManager.beginTransaction()
             .remove(this)
@@ -51,23 +56,16 @@ class AccountFragment(
     }
 
     private fun openSettings() {
-        val fragment = SettingsFragmentProvider.get().getSettingsFragment(requireContext())
+        val settingsScope = with(userScope.scopes.settings) {
+            create()
+            get()
+        }
+
+        val fragment = settingsScope.module.settingsFragment
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack("settings")
             .commit()
-    }
-
-    private fun createEncryptedSharedPreferences(): SharedPreferences {
-        return EncryptedSharedPreferences.create(
-            requireContext(),
-            "encrypted_preferences",
-            MasterKey.Builder(requireContext())
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build(),
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
     }
 }

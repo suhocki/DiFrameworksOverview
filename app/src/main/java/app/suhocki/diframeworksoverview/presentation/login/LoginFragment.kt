@@ -1,7 +1,5 @@
 package app.suhocki.diframeworksoverview.presentation.login
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -9,14 +7,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import app.suhocki.diframeworksoverview.R
-import app.suhocki.diframeworksoverview.data.preferences.SharedPreferencesWrapper
-import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.databinding.FragmentLoginBinding
-import app.suhocki.diframeworksoverview.presentation.account.AccountFragment
-import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
+import app.suhocki.diframeworksoverview.di.scope.AppScope
 import app.suhocki.diframeworksoverview.presentation.utils.showSnackbar
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.collect
@@ -38,11 +31,9 @@ class LoginFragment(
         lifecycleScope.launch {
             viewModel.screenState
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .collect { (isProgress, isLoginCompleted) ->
+                .collect { (isProgress, userName) ->
                     viewBinding.progress.isVisible = isProgress
-                    if (isLoginCompleted) {
-                        navigateToAccount()
-                    }
+                    userName?.let { navigateToAccount(userName) }
                 }
         }
     }
@@ -55,13 +46,18 @@ class LoginFragment(
         }
     }
 
-    private fun navigateToAccount() {
-        val encryptedSharedPreferences = createEncryptedSharedPreferences()
-        val userManager = UserManager(encryptedSharedPreferences)
-        val currentUser = userManager.currentUser
-        val sharedPreferences = requireContext().getSharedPreferences(currentUser, Context.MODE_PRIVATE)
-        val preferences = SharedPreferencesWrapper(sharedPreferences)
-        val fragment = AccountFragment(preferences, userManager)
+    private fun navigateToAccount(userName: String) {
+        val userScope = with(AppScope.scopes.user) {
+            create(userName)
+            get()
+        }
+
+        val accountScope = with(userScope.scopes.account) {
+            create()
+            get()
+        }
+
+        val fragment = accountScope.module.accountFragment
 
         parentFragmentManager.beginTransaction()
             .remove(this)
@@ -71,25 +67,13 @@ class LoginFragment(
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isRemoving) {
-            ViewModelStorage.clear<LoginViewModel>()
+        if (!requireActivity().isChangingConfigurations) {
+            AppScope.scopes.login.clear()
         }
-    }
-
-    private fun createEncryptedSharedPreferences(): SharedPreferences {
-        return EncryptedSharedPreferences.create(
-            requireContext(),
-            "encrypted_preferences",
-            MasterKey.Builder(requireContext())
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build(),
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
     }
 
     data class ScreenState(
         val isProgress: Boolean = false,
-        val isLoginCompleted: Boolean = false
+        val userName: String? = null
     )
 }
