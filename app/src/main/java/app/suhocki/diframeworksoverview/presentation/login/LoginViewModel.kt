@@ -3,6 +3,7 @@ package app.suhocki.diframeworksoverview.presentation.login
 import app.suhocki.diframeworksoverview.data.authorization.LoginRepository
 import app.suhocki.diframeworksoverview.data.error.ErrorHandler
 import app.suhocki.diframeworksoverview.data.user.UserManager
+import app.suhocki.diframeworksoverview.di.login.LoginScope
 import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,8 +11,10 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel(
+@LoginScope
+class LoginViewModel @Inject constructor(
     val errorHandler: ErrorHandler,
     private val userManager: UserManager,
     private val loginRepository: LoginRepository,

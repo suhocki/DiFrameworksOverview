@@ -7,8 +7,9 @@ import app.suhocki.diframeworksoverview.R
 import app.suhocki.diframeworksoverview.databinding.FragmentSettingsBinding
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import by.kirich1409.viewbindingdelegate.viewBinding
+import javax.inject.Inject
 
-class SettingsFragment(
+class SettingsFragment @Inject constructor(
     private val preferences: Preferences
 ) : Fragment(R.layout.fragment_settings) {
     private val viewBinding: FragmentSettingsBinding by viewBinding()

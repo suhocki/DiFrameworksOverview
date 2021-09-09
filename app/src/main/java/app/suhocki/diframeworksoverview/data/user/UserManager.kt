@@ -2,9 +2,11 @@ package app.suhocki.diframeworksoverview.data.user
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import javax.inject.Inject
+import javax.inject.Named
 
-class UserManager(
-    private val sharedPreferences: SharedPreferences
+class UserManager @Inject constructor(
+    @Named("encrypted") private val sharedPreferences: SharedPreferences
 ) {
     var currentUser: String?
         get() = sharedPreferences.getString("currentUser", null)

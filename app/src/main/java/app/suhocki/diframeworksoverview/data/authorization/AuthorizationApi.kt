@@ -1,8 +1,9 @@
 package app.suhocki.diframeworksoverview.data.authorization
 
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class AuthorizationApi {
+class AuthorizationApi @Inject constructor() {
     /**
      * @return security token if authorization finished successfully.
      */

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id("kotlin-kapt")
 }
 
 android {
@@ -47,4 +48,7 @@ dependencies {
     implementation 'androidx.security:security-crypto:1.1.0-alpha03'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha03'
 
+    def daggerVersion = "2.36"
+    implementation("com.google.dagger:dagger:$daggerVersion")
+    kapt("com.google.dagger:dagger-compiler:$daggerVersion")
 }
