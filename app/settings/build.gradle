@@ -39,4 +39,7 @@ dependencies {
     def autoService = "1.0"
     implementation "com.google.auto.service:auto-service-annotations:$autoService"
     kapt "com.google.auto.service:auto-service:$autoService"
+
+    def kodein = '7.6.0'
+    implementation "org.kodein.di:kodein-di:$kodein"
 }

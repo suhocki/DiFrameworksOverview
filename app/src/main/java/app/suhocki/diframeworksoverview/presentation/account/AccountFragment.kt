@@ -1,20 +1,20 @@
 package app.suhocki.diframeworksoverview.presentation.account
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import app.suhocki.diframeworksoverview.R
 import app.suhocki.diframeworksoverview.data.user.UserManager
 import app.suhocki.diframeworksoverview.databinding.FragmentAccountBinding
+import app.suhocki.diframeworksoverview.di.Kodein
 import app.suhocki.diframeworksoverview.domain.preferences.Preferences
 import app.suhocki.diframeworksoverview.presentation.login.LoginFragment
-import app.suhocki.diframeworksoverview.presentation.login.LoginViewModel
-import app.suhocki.diframeworksoverview.presentation.settings.SettingsFragmentProvider
-import app.suhocki.diframeworksoverview.presentation.utils.mvvm.ViewModelStorage
+import app.suhocki.diframeworksoverview.presentation.login.LoginScope
+import app.suhocki.diframeworksoverview.presentation.settings.SettingsModuleProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
+import org.kodein.di.direct
+import org.kodein.di.instance
+import org.kodein.di.on
 
 class AccountFragment(
     private val preferences: Preferences,
@@ -40,9 +40,8 @@ class AccountFragment(
     }
 
     private fun openLogin() {
-        val viewModel: LoginViewModel =
-            ViewModelStorage.getViewModel(requireContext().applicationContext)
-        val fragment = LoginFragment(viewModel)
+        val kodein = Kodein.instance.on(LoginScope)
+        val fragment = kodein.direct.instance<Fragment>(LoginFragment::class.qualifiedName)
 
         parentFragmentManager.beginTransaction()
             .remove(this)
@@ -51,23 +50,15 @@ class AccountFragment(
     }
 
     private fun openSettings() {
-        val fragment = SettingsFragmentProvider.get().getSettingsFragment(requireContext())
+        val settingsModule = SettingsModuleProvider.get().getSettingsModule()
+        Kodein.addModule(settingsModule)
+
+        val fragment = Kodein.instance.direct
+            .instance<Fragment>("app.suhocki.settings.SettingsFragment")
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack("settings")
             .commit()
-    }
-
-    private fun createEncryptedSharedPreferences(): SharedPreferences {
-        return EncryptedSharedPreferences.create(
-            requireContext(),
-            "encrypted_preferences",
-            MasterKey.Builder(requireContext())
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build(),
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
     }
 }
